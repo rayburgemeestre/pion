@@ -52,7 +52,7 @@ public:
     enum { READ_BUFFER_SIZE = 8192 };
     
     /// data type for a function that handles TCP connection objects
-    typedef boost::function1<void, boost::shared_ptr<connection> >   connection_handler;
+    typedef boost::function1<void, boost::shared_ptr<connection> & >   connection_handler;
     
     /// data type for an I/O read buffer
     typedef boost::array<char, READ_BUFFER_SIZE>    read_buffer_type;
@@ -593,7 +593,7 @@ public:
     
     /// This function should be called when a server has finished handling
     /// the connection
-    inline void finish(void) { if (m_finished_handler) m_finished_handler(shared_from_this()); }
+    inline void finish(void) { if (m_finished_handler) { boost::shared_ptr<connection> lvalue = shared_from_this(); m_finished_handler(lvalue); } }
 
     /// returns true if the connection is encrypted using SSL
     inline bool get_ssl_flag(void) const { return m_ssl_flag; }
